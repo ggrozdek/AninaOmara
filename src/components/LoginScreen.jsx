@@ -62,10 +62,17 @@ function LoginForm({ onSuccess }) {
       await login(username, password)
       onSuccess?.()
     } catch (err) {
-      if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+      const code = err.code || ''
+      if (code === 'auth/invalid-credential' || code === 'auth/user-not-found' || code === 'auth/wrong-password') {
         setError('Napačno uporabniško ime ali geslo.')
+      } else if (code === 'auth/operation-not-allowed') {
+        setError('Email/Password prijava ni omogočena v Firebase. Odpri Firebase Console → Authentication → Sign-in method → Email/Password → Enabled.')
+      } else if (code === 'auth/api-key-not-valid' || code === 'auth/invalid-api-key') {
+        setError('Neveljaven Firebase API ključ. Preveri VITE_FIREBASE_API_KEY v .env.local.')
+      } else if (code === 'auth/network-request-failed') {
+        setError('Napaka omrežja. Preveri internetno povezavo.')
       } else {
-        setError('Prišlo je do napake. Poskusi znova.')
+        setError(`Napaka: ${err.message || code || 'Neznana napaka'}`)
       }
     } finally {
       setLoading(false)
@@ -128,7 +135,20 @@ function RegisterForm({ onSuccess }) {
       await register(username, password)
       onSuccess?.()
     } catch (err) {
-      setErrors({ global: err.message || 'Prišlo je do napake.' })
+      const code = err.code || ''
+      let msg = err.message || 'Prišlo je do napake.'
+      if (code === 'auth/operation-not-allowed') {
+        msg = 'Email/Password prijava ni omogočena. Odpri Firebase Console → Authentication → Sign-in method → Email/Password → Enabled.'
+      } else if (code === 'auth/weak-password') {
+        msg = 'Geslo je prešibko. Uporabi vsaj 6 znakov.'
+      } else if (code === 'auth/email-already-in-use') {
+        msg = 'To uporabniško ime je že zasedeno.'
+      } else if (code === 'auth/api-key-not-valid' || code === 'auth/invalid-api-key') {
+        msg = 'Neveljaven Firebase API ključ. Preveri .env.local.'
+      } else if (code === 'permission-denied' || code === 'auth/network-request-failed') {
+        msg = `Firebase napaka (${code}): preveri Firestore pravila in Firebase Console nastavitve.`
+      }
+      setErrors({ global: msg })
     } finally {
       setLoading(false)
     }

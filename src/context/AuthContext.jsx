@@ -6,7 +6,7 @@ import {
   onAuthStateChanged,
   updateProfile,
 } from 'firebase/auth'
-import { doc, setDoc, getDoc } from 'firebase/firestore'
+import { doc, setDoc } from 'firebase/firestore'
 import { auth, db } from '../firebase'
 import useWardrobeStore from '../store/wardrobeStore'
 
@@ -45,24 +45,29 @@ export function AuthProvider({ children }) {
 
   // ── Register ──────────────────────────────────────────────────────────────
   const register = async (username, password) => {
-    // Validate format
+    // Validate format client-side first
     if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
       throw new Error('Uporabniško ime: 3–20 znakov (črke, številke, _)')
     }
     const lower = username.toLowerCase()
 
-    // Check uniqueness
-    const nameRef  = doc(db, 'usernames', lower)
-    const nameSnap = await getDoc(nameRef)
-    if (nameSnap.exists()) throw new Error('To uporabniško ime je že zasedeno.')
+    // Create Firebase Auth user first — if email already exists it means
+    // the username is taken (no unauthenticated Firestore read needed)
+    let fbUser
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, toEmail(lower), password)
+      fbUser = cred.user
+    } catch (err) {
+      if (err.code === 'auth/email-already-in-use') {
+        throw new Error('To uporabniško ime je že zasedeno.')
+      }
+      throw err  // propagate auth/operation-not-allowed, etc.
+    }
 
-    // Create Firebase Auth user
-    const { user: fbUser } = await createUserWithEmailAndPassword(auth, toEmail(lower), password)
+    // Now authenticated — safe to write to Firestore
     await updateProfile(fbUser, { displayName: username })
-
-    // Persist username → uid mapping + init settings
     await Promise.all([
-      setDoc(nameRef, { uid: fbUser.uid }),
+      setDoc(doc(db, 'usernames', lower), { uid: fbUser.uid }),
       setDoc(doc(db, 'users', fbUser.uid, 'data', 'settings'), { customPiles: [] }),
     ])
 
