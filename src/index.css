@@ -1,0 +1,531 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Wood grain base ─── */
+:root {
+  --wood-dark:   #3d1f0d;
+  --wood-mid:    #6b3318;
+  --wood-light:  #a05a2c;
+  --wood-pale:   #c8864a;
+  --brass:       #b8962e;
+  --brass-light: #d4b04a;
+  --shadow-wood: rgba(20,8,0,0.55);
+  --shelf-top:   #7a3f1a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', 'Georgia', serif;
+  background: var(--wood-dark);
+  color: #f5ead8;
+  overflow-x: hidden;
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--wood-dark); }
+::-webkit-scrollbar-thumb { background: var(--wood-mid); border-radius: 4px; }
+
+/* ─── Wood grain texture (CSS only) ─── */
+.wood-grain {
+  background-color: var(--wood-mid);
+  background-image:
+    /* knot hint */
+    radial-gradient(ellipse 18px 10px at 62% 30%, rgba(30,10,0,0.18) 0%, transparent 100%),
+    radial-gradient(ellipse 10px 6px at 30% 70%, rgba(30,10,0,0.12) 0%, transparent 100%),
+    /* fine grain lines */
+    repeating-linear-gradient(
+      88deg,
+      transparent 0px, transparent 4px,
+      rgba(0,0,0,0.07) 4px, rgba(0,0,0,0.07) 5px,
+      transparent 5px, transparent 12px,
+      rgba(255,255,255,0.025) 12px, rgba(255,255,255,0.025) 13px,
+      transparent 13px, transparent 22px
+    ),
+    /* wide grain bands */
+    repeating-linear-gradient(
+      92deg,
+      transparent 0px, transparent 40px,
+      rgba(0,0,0,0.06) 40px, rgba(0,0,0,0.06) 80px,
+      transparent 80px, transparent 130px,
+      rgba(255,255,255,0.03) 130px, rgba(255,255,255,0.03) 160px
+    ),
+    /* base warm gradient */
+    linear-gradient(
+      180deg,
+      #7a3818 0%, #8b4520 15%,
+      #6b3015 30%, #9a5228 45%,
+      #7a3818 60%, #6b2f12 75%,
+      #8b4520 90%, #5c2810 100%
+    );
+}
+
+.wood-dark-grain {
+  background-color: var(--wood-dark);
+  background-image:
+    repeating-linear-gradient(
+      89deg,
+      transparent 0px, transparent 6px,
+      rgba(0,0,0,0.1) 6px, rgba(0,0,0,0.1) 7px,
+      transparent 7px, transparent 18px,
+      rgba(255,255,255,0.015) 18px, rgba(255,255,255,0.015) 19px
+    ),
+    linear-gradient(180deg, #2e1208 0%, #3d1a0a 40%, #2a1008 70%, #3d1a0a 100%);
+}
+
+.wood-light-grain {
+  background-color: var(--wood-light);
+  background-image:
+    repeating-linear-gradient(
+      87deg,
+      transparent 0px, transparent 3px,
+      rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px,
+      transparent 4px, transparent 10px
+    ),
+    linear-gradient(180deg, #b06030 0%, #c07038 40%, #a05028 70%, #b86234 100%);
+}
+
+/* ─── Wardrobe frame / outer shell ─── */
+.wardrobe-frame {
+  background-image:
+    repeating-linear-gradient(
+      91deg,
+      transparent 0px, transparent 5px,
+      rgba(0,0,0,0.08) 5px, rgba(0,0,0,0.08) 6px,
+      transparent 6px, transparent 16px
+    ),
+    linear-gradient(180deg, #4a2210 0%, #3a1a08 50%, #2e1208 100%);
+  border: 3px solid #2a1008;
+  box-shadow:
+    inset 0 0 40px rgba(0,0,0,0.5),
+    0 20px 60px rgba(0,0,0,0.8),
+    0 0 0 1px rgba(180,120,60,0.2);
+}
+
+/* ─── Door styles ─── */
+.door {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.door-panel-inset {
+  border: 2px solid rgba(0,0,0,0.35);
+  box-shadow:
+    inset 0 0 12px rgba(0,0,0,0.3),
+    inset 2px 2px 4px rgba(255,255,255,0.06),
+    0 1px 0 rgba(255,255,255,0.08);
+  border-radius: 3px;
+}
+
+/* Brass handle — JSX-built BrassHandle component is used; these styles are kept for reference only */
+.door-handle {
+  width: 14px;
+  height: 44px;
+  background: linear-gradient(90deg, #8a6a1a, #d4b04a 40%, #c09030 70%, #8a6a1a);
+  border-radius: 7px;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.6),
+    inset 0 1px 2px rgba(255,255,255,0.3),
+    inset 0 -1px 2px rgba(0,0,0,0.4);
+  cursor: pointer;
+  position: relative;
+}
+
+/* Door shadow when open */
+.door-shadow-left {
+  box-shadow: inset -20px 0 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(0,0,0,0.3);
+}
+.door-shadow-right {
+  box-shadow: inset 20px 0 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(0,0,0,0.3);
+}
+
+/* ─── Shelf ─── */
+.shelf {
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px, transparent 8px,
+      rgba(0,0,0,0.07) 8px, rgba(0,0,0,0.07) 9px
+    ),
+    linear-gradient(180deg, #c8864a 0%, #b87030 40%, #a06028 80%, #8b5020 100%);
+  box-shadow:
+    0 6px 18px rgba(0,0,0,0.6),
+    0 2px 4px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.12);
+  border-top: 1px solid rgba(220,160,80,0.3);
+}
+
+/* ─── Hanging rod ─── */
+.hanging-rod {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.15) 0%,
+    #888 20%,
+    #c0c0c0 40%,
+    #aaa 60%,
+    #777 80%,
+    rgba(0,0,0,0.3) 100%
+  );
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.7), inset 0 2px 4px rgba(255,255,255,0.2);
+}
+
+/* Rod bracket */
+.rod-bracket {
+  background: linear-gradient(90deg, #888, #bbb, #888);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
+/* ─── Clothing piles ─── */
+.pile-container {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.pile-container:hover {
+  transform: translateY(-4px);
+}
+.pile-container:hover .pile-label {
+  color: var(--brass-light);
+}
+
+.folded-item {
+  border-radius: 2px 2px 0 0;
+  position: relative;
+  transition: all 0.2s;
+  /* Fabric-like texture */
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0px, transparent 3px,
+    rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px
+  );
+}
+
+.pile-label {
+  font-family: 'Georgia', serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--brass);
+  text-align: center;
+  margin-top: 10px;
+  transition: color 0.2s;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+.pile-count {
+  font-size: 11px;
+  color: rgba(245,234,216,0.5);
+  letter-spacing: 0;
+  font-weight: 400;
+  font-family: 'Inter', sans-serif;
+  margin-top: 2px;
+}
+
+/* ─── Hanging clothes (decorative) ─── */
+.hanger {
+  width: 2px;
+  background: linear-gradient(180deg, #999 0%, #666 100%);
+  border-radius: 1px;
+  position: relative;
+}
+
+.hanger::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 26px; height: 12px;
+  border-top: 2px solid #888;
+  border-left: 2px solid #888;
+  border-right: 2px solid #888;
+  border-radius: 12px 12px 0 0;
+}
+
+.hung-item {
+  position: absolute;
+  top: 14px;
+  border-radius: 3px;
+  opacity: 0.85;
+}
+
+/* ─── Interior walls ─── */
+.wardrobe-back-wall {
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px, transparent 60px,
+      rgba(0,0,0,0.06) 60px, rgba(0,0,0,0.06) 61px
+    ),
+    repeating-linear-gradient(
+      180deg,
+      transparent 0px, transparent 80px,
+      rgba(0,0,0,0.04) 80px, rgba(0,0,0,0.04) 81px
+    ),
+    linear-gradient(180deg, #3a1a08 0%, #2e1208 50%, #3a1a08 100%);
+}
+
+.wardrobe-side-wall {
+  background-image:
+    repeating-linear-gradient(
+      180deg,
+      transparent 0px, transparent 5px,
+      rgba(0,0,0,0.07) 5px, rgba(0,0,0,0.07) 6px
+    ),
+    linear-gradient(90deg, #2a1008 0%, #3d1a0a 100%);
+}
+
+/* ─── Wardrobe crown / top trim ─── */
+.wardrobe-crown {
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px, transparent 5px,
+      rgba(0,0,0,0.08) 5px, rgba(0,0,0,0.08) 6px
+    ),
+    linear-gradient(180deg, #9a5228 0%, #7a3818 50%, #5c2810 100%);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.7), inset 0 -2px 6px rgba(0,0,0,0.4);
+}
+
+/* ─── Buttons ─── */
+.btn-brass {
+  background: linear-gradient(135deg, #b8962e, #d4b04a, #b8962e);
+  color: #3d1f0d;
+  border: 1px solid #8a6a1a;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Georgia', serif;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+  transition: all 0.2s;
+}
+.btn-brass:hover {
+  background: linear-gradient(135deg, #c8a840, #e4c05c, #c8a840);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+}
+.btn-brass:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+.btn-brass:focus-visible {
+  outline: 2px solid rgba(212,176,74,0.8);
+  outline-offset: 3px;
+}
+
+.btn-wood {
+  background: linear-gradient(135deg, #6b3318, #8b4520);
+  color: #f5ead8;
+  border: 1px solid #3d1f0d;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+  transition: all 0.2s;
+}
+.btn-wood:hover {
+  background: linear-gradient(135deg, #7a3a1e, #9a5028);
+  transform: translateY(-1px);
+}
+.btn-wood:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+.btn-wood:focus-visible {
+  outline: 2px solid rgba(184,150,46,0.6);
+  outline-offset: 3px;
+}
+
+/* ─── Input fields ─── */
+.input-wood {
+  background: rgba(20,8,0,0.5);
+  border: 1px solid rgba(180,120,60,0.4);
+  color: #f5ead8;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: all 0.2s;
+  width: 100%;
+}
+.input-wood:focus {
+  border-color: var(--brass);
+  box-shadow: 0 0 0 3px rgba(184,150,46,0.15);
+}
+.input-wood::placeholder { color: rgba(245,234,216,0.3); }
+.input-wood option { background: #3d1a0a; color: #f5ead8; }
+
+/* ─── Tag pill ─── */
+.tag-brass {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(184,150,46,0.15);
+  border: 1px solid rgba(184,150,46,0.4);
+  color: var(--brass-light);
+}
+
+/* ─── Mannequin section ─── */
+.mannequin-section {
+  background-image:
+    linear-gradient(180deg, #1a0a04 0%, #0d0503 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.mannequin-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(184,150,46,0.08) 0%, transparent 70%),
+    repeating-linear-gradient(90deg, transparent 0px, transparent 80px, rgba(255,255,255,0.01) 80px, rgba(255,255,255,0.01) 81px);
+  pointer-events: none;
+}
+
+/* ─── Outfit slot cards ─── */
+.slot-card {
+  background: rgba(20,8,0,0.5);
+  border: 1px solid rgba(180,120,60,0.25);
+  border-radius: 12px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.slot-card:hover {
+  border-color: rgba(212,176,74,0.5);
+  background: rgba(40,16,4,0.7);
+}
+.slot-card.active {
+  border-color: var(--brass);
+  box-shadow: 0 0 16px rgba(184,150,46,0.25);
+}
+
+/* ─── Modal / Drawer ─── */
+.pile-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.pile-modal-content {
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px, transparent 6px,
+      rgba(0,0,0,0.06) 6px, rgba(0,0,0,0.06) 7px
+    ),
+    linear-gradient(180deg, #4a2210 0%, #3a1a08 100%);
+  border-top: 2px solid rgba(184,150,46,0.4);
+  border-radius: 24px 24px 0 0;
+  padding: 28px 32px 40px;
+  max-height: 85vh;
+  overflow-y: auto;
+  width: 100%;
+  max-width: 780px;
+  box-shadow: 0 -20px 60px rgba(0,0,0,0.8);
+}
+
+/* ─── Clothes card in modal ─── */
+.clothes-card {
+  background: rgba(20,8,0,0.4);
+  border: 1px solid rgba(180,120,60,0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.clothes-card:hover {
+  border-color: rgba(212,176,74,0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+.clothes-card.selected {
+  border-color: var(--brass);
+  box-shadow: 0 0 14px rgba(184,150,46,0.3);
+}
+
+/* ─── Upload zone ─── */
+.upload-zone {
+  border: 2px dashed rgba(184,150,46,0.35);
+  border-radius: 14px;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: rgba(212,176,74,0.7);
+  background: rgba(184,150,46,0.06);
+}
+
+/* ─── Animations ─── */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-1.5deg); }
+  50% { transform: rotate(1.5deg); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes shimmer-brass {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.float-slow { animation: float-slow 4s ease-in-out infinite; }
+.sway { animation: sway 3s ease-in-out infinite; }
+.fade-in-up { animation: fadeInUp 0.5s ease forwards; }
+
+/* Stagger */
+.stagger > * { opacity: 0; }
+.stagger > *:nth-child(1) { animation: fadeInUp 0.5s ease 0.05s forwards; }
+.stagger > *:nth-child(2) { animation: fadeInUp 0.5s ease 0.15s forwards; }
+.stagger > *:nth-child(3) { animation: fadeInUp 0.5s ease 0.25s forwards; }
+.stagger > *:nth-child(4) { animation: fadeInUp 0.5s ease 0.35s forwards; }
+.stagger > *:nth-child(n+5) { animation: fadeInUp 0.5s ease 0.45s forwards; }
+
+/* ─── Reduced motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  .float-slow, .sway, .fade-in-up { animation: none; }
+  .stagger > * { opacity: 1; animation: none; }
+  .pile-container { transition: none; }
+  .btn-brass, .btn-wood, .clothes-card, .slot-card, .upload-zone { transition: none; }
+}
+
+/* ─── Ambient dust/warmth glow ─── */
+.ambient-glow {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(60px);
+}
